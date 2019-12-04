@@ -1,0 +1,105 @@
+create table 員工(
+  員工編號	char(7),
+  姓名		varchar(20) not null,
+  職稱		varchar(30),
+  性別		char(1),
+  出生日期	datetime,
+  任用日期	datetime,
+  區域號碼	varchar(10),
+  地址		varchar(60),
+  分機號碼	varchar(4),
+  報告人		char(7),
+  primary key (員工編號)
+)
+
+create table 客戶(
+  客戶編號	char(5),
+  公司名稱	varchar(40) not null,
+  聯絡人		varchar(30),
+  聯絡人職稱	varchar(30),
+  聯絡人性別	char(1),
+  郵遞區號	varchar(10),
+  地址		varchar(60),
+  電話		varchar(24),
+  primary key (客戶編號)
+)
+
+create table 供應商(
+  供應商編號	char(5),
+  供應商		varchar(40) not null,
+  聯絡人		varchar(30),
+  聯絡人職稱	varchar(30),
+  聯絡人性別	char(1),
+  郵遞區號	varchar(10),
+  地址		varchar(60),
+  電話		varchar(24),
+  primary key (供應商編號),
+  check(地址 is not null or 電話 is not null)
+)
+
+create table 產品類別(
+  類別編號	integer,
+  類別名稱	varchar(15) not null,
+  primary key (類別編號)
+)
+
+create table 產品資料(
+  產品編號	integer,
+  類別編號	integer,
+  供應商編號	char(5),
+  產品名稱	varchar(40),
+  建議單價	integer,
+  庫存量	integer default 0,
+  安全存量	integer default 0,
+  primary key (產品編號),
+  foreign key (類別編號) references 產品類別 (類別編號),
+  foreign key (供應商編號) references 供應商 (供應商編號)
+)
+
+create table 訂單(
+  訂單編號	char(8),
+  員工編號	char(7),
+  客戶編號	char(5),
+  訂單日期	datetime,
+  付款方式	varchar(50),
+  交貨方式	varchar(40),
+  primary key (訂單編號),
+  foreign key (員工編號) references 員工 (員工編號),
+  foreign key (客戶編號) references 客戶 (客戶編號)
+)
+
+create table 訂單明細(
+  訂單編號	char(8),
+  產品編號	integer,
+  實際單價	integer,
+  數量		integer,
+  primary key (訂單編號, 產品編號),
+  foreign key (訂單編號) references 訂單 (訂單編號)
+    on delete cascade
+    on update cascade,
+  foreign key (產品編號) references 產品資料 (產品編號)
+)
+
+
+insert into `產品類別` (類別編號,類別名稱)
+values(8,'咖啡類')
+
+
+insert into `供應商` (供應商編號,供應商,聯絡人,聯絡人職稱,聯絡人性別,郵遞區號,地址,電話)
+values ('S0005','正心','薛俊生','訂貨員','男','900','屏東市圓通南路23巷27號','(08)598-7654')
+
+
+insert into `產品資料` (產品編號,  類別編號,  供應商編號,  產品名稱,  建議單價,  庫存量,  安全存量)
+values (13,8,'S0005','拿鐵',35,0,30)
+
+
+delete from `產品類別`
+where `類別編號` =8
+
+
+delete from `產品資料`
+where `產別編號` =8
+
+
+insert into `產品類別` (`類別編號`,`類別名稱`)
+values(4,'奶類')
